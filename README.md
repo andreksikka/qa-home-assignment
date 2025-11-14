@@ -63,6 +63,7 @@ dotnet run --project src/CardValidation.Web
 
 ### API available at:
 POST http://localhost:5000/api/creditcards/validate
+
 Example body:
 {
   "cardOwner": "John Doe",
