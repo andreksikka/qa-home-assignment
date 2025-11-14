@@ -30,17 +30,16 @@ jobs:
           dotnet test \
             --no-build \
             --configuration Debug \
+            --logger "trx;LogFileName=testresults.trx" \
             /p:CollectCoverage=true \
             /p:CoverletOutput=./TestResults/coverage.xml \
             /p:CoverletOutputFormat=cobertura
 
-      - name: Upload test results (trx & coverage)
+      - name: Upload test results
         uses: actions/upload-artifact@v4
         with:
           name: test-results
-          path: |
-            **/TestResults/*.trx
-            **/TestResults/*.xml
+          path: "**/TestResults/**"
 
   coverage-report:
     needs: build-and-test
