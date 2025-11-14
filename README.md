@@ -15,7 +15,7 @@ This project includes:
 
 ---
 
-## 🚀 Features
+## Features
 
 ### Credit Card Validation Rules
 The API validates:
@@ -30,7 +30,7 @@ The API validates:
 
 ---
 
-## 🧪 Test Coverage
+## Test Coverage
 
 ### Unit Tests
 Located in:
