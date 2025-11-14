@@ -11,7 +11,7 @@
   <ItemGroup>
     <!-- Required for testhost -->
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
-
+    <PackageReference Include="coverlet.collector" Version="6.0.0" />
     <PackageReference Include="Reqnroll" Version="2.0.0" />
     <PackageReference Include="Reqnroll.XUnit" Version="2.0.0" />
     <PackageReference Include="Gherkin" Version="19.0.3" />

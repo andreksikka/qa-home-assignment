@@ -25,29 +25,28 @@ jobs:
       - name: Build
         run: dotnet build --configuration Debug --no-restore
 
-      - name: Run unit tests with coverage
-        run: >
-          dotnet test tests/CardValidation.UnitTests
-          --no-build
-          --configuration Debug
-          /p:CollectCoverage=true
-          /p:CoverletOutput=../../TestResults/UnitTests/coverage.xml
-          /p:CoverletOutputFormat=cobertura
+      # -------------------------------------------
+      # RUN TESTS + COLLECT COVERAGE (working)
+      # -------------------------------------------
+      - name: Run tests with coverage enabled
+        run: |
+          dotnet test \
+            --no-build \
+            --configuration Debug \
+            --results-directory TestResults \
+            --collect:"XPlat Code Coverage"
 
-      - name: Run integration tests with coverage
-        run: >
-          dotnet test tests/CardValidation.IntegrationTests
-          --no-build
-          --configuration Debug
-          /p:CollectCoverage=true
-          /p:CoverletOutput=../../TestResults/IntegrationTests/coverage.xml
-          /p:CoverletOutputFormat=cobertura
-
-      - name: Upload test results (coverage)
+      # -------------------------------------------
+      # UPLOAD raw test results & coverage XML
+      # -------------------------------------------
+      - name: Upload test results (trx & coverage)
         uses: actions/upload-artifact@v4
         with:
           name: test-results
-          path: TestResults/**
+          path: |
+            TestResults/**/*.trx
+            TestResults/**/*coverage*.xml
+            TestResults/**/*coverage*.cobertura.xml
 
   coverage-report:
     needs: build-and-test
@@ -71,13 +70,19 @@ jobs:
       - name: Install ReportGenerator tool
         run: dotnet tool install -g dotnet-reportgenerator-globaltool
 
+      # -------------------------------------------
+      # GENERATE HTML COVERAGE REPORT
+      # -------------------------------------------
       - name: Generate coverage HTML report
-        run: >
-          reportgenerator
-          -reports:TestResults/**/coverage.xml
-          -targetdir:CoverageReport
-          -reporttypes:HtmlInline_AzurePipelines
+        run: |
+          reportgenerator \
+            -reports:TestResults/**/*coverage*.xml \
+            -targetdir:CoverageReport \
+            -reporttypes:HtmlInline_AzurePipelines
 
+      # -------------------------------------------
+      # UPLOAD COVERAGE REPORT
+      # -------------------------------------------
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
         with:

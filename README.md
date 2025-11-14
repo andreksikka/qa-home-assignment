@@ -15,7 +15,7 @@ This project includes:
 
 ---
 
-## 🚀 Features
+## Features
 
 ### Credit Card Validation Rules
 The API validates:
@@ -30,7 +30,7 @@ The API validates:
 
 ---
 
-## 🧪 Test Coverage
+## Test Coverage
 
 ### Unit Tests
 Located in:
@@ -59,7 +59,6 @@ Includes scenarios:
 (Passes: **4/4 scenarios**)
 
 ### Running the Application Locally
-```bash
 dotnet run --project src/CardValidation.Web
 
 ### API available at:
