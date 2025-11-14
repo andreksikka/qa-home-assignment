@@ -25,24 +25,29 @@ jobs:
       - name: Build
         run: dotnet build --configuration Debug --no-restore
 
-      - name: Run tests with coverage
-        run: |
-          dotnet test \
-            --no-build \
-            --configuration Debug \
-            --logger "trx;LogFileName=testresults.trx" \
-            /p:CollectCoverage=true \
-            /p:CoverletOutput=TestResults/ \
-            /p:CoverletOutputFormat=cobertura
+      - name: Run unit tests with coverage
+        run: >
+          dotnet test tests/CardValidation.UnitTests
+          --no-build
+          --configuration Debug
+          /p:CollectCoverage=true
+          /p:CoverletOutput=../../TestResults/UnitTests/coverage.xml
+          /p:CoverletOutputFormat=cobertura
 
-      - name: Upload test results
+      - name: Run integration tests with coverage
+        run: >
+          dotnet test tests/CardValidation.IntegrationTests
+          --no-build
+          --configuration Debug
+          /p:CollectCoverage=true
+          /p:CoverletOutput=../../TestResults/IntegrationTests/coverage.xml
+          /p:CoverletOutputFormat=cobertura
+
+      - name: Upload test results (coverage)
         uses: actions/upload-artifact@v4
         with:
           name: test-results
-          path: |
-            **/TestResults/*.trx
-            **/TestResults/*.xml
-            **/TestResults/coverage*.xml
+          path: TestResults/**
 
   coverage-report:
     needs: build-and-test
@@ -63,15 +68,15 @@ jobs:
         with:
           dotnet-version: "8.0.x"
 
-      - name: Install ReportGenerator
+      - name: Install ReportGenerator tool
         run: dotnet tool install -g dotnet-reportgenerator-globaltool
 
       - name: Generate coverage HTML report
-        run: |
-          reportgenerator \
-            -reports:TestResults/**/coverage*.xml \
-            -targetdir:CoverageReport \
-            -reporttypes:HtmlInline_AzurePipelines
+        run: >
+          reportgenerator
+          -reports:TestResults/**/coverage.xml
+          -targetdir:CoverageReport
+          -reporttypes:HtmlInline_AzurePipelines
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
