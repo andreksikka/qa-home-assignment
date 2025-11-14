@@ -1,0 +1,23 @@
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+COPY . .
+RUN dotnet restore
+RUN dotnet build -c Release
+
+# Unit tests with coverage to /artifacts
+RUN mkdir -p /artifacts/coverage /artifacts/trx
+RUN dotnet test tests/CardValidation.UnitTests -c Release \
+    --logger "trx;LogFileName=/artifacts/trx/unit.trx" \
+    /p:CollectCoverage=true \
+    /p:CoverletOutput=/artifacts/coverage/ \
+    /p:CoverletOutputFormat=cobertura
+
+# Integration tests: start API and run
+CMD bash -lc '\
+  dotnet run --project src/CardValidation.Web -c Release --urls http://0.0.0.0:5000 & \
+  API_PID=$!; \
+  sleep 5; \
+  dotnet test tests/CardValidation.IntegrationTests -c Release \
+    --logger "trx;LogFileName=/artifacts/trx/integration.trx"; \
+  kill $API_PID || true; wait $API_PID 2>/dev/null || true \
+'

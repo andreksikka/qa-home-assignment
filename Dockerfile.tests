@@ -1,0 +1,18 @@
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS testrunner
+
+WORKDIR /app
+
+# copy solution first
+COPY CardValidation.sln ./
+
+# copy project structure
+COPY src ./src
+COPY tests ./tests
+
+# restore using SLN to pull all test dependencies
+RUN dotnet restore CardValidation.sln
+
+# build entire solution
+RUN dotnet build CardValidation.sln --configuration Debug --no-restore
+
+CMD ["dotnet", "test", "CardValidation.sln", "--no-build", "--configuration", "Debug"]

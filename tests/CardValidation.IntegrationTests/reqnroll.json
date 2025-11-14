@@ -1,0 +1,11 @@
+{
+  "generator": {
+    "allowDebugGeneratedFiles": true
+  },
+  "runtime": {
+    "testFramework": "xunit",
+    "unitTestProvider": {
+      "name": "xunit"
+    }
+  }
+}

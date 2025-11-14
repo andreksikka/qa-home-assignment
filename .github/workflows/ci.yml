@@ -1,0 +1,78 @@
+name: .NET CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --configuration Debug --no-restore
+
+      - name: Run tests with coverage
+        run: |
+          dotnet test \
+            --no-build \
+            --configuration Debug \
+            /p:CollectCoverage=true \
+            /p:CoverletOutput=./TestResults/coverage.xml \
+            /p:CoverletOutputFormat=cobertura
+
+      - name: Upload test results (trx & coverage)
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: |
+            **/TestResults/*.trx
+            **/TestResults/*.xml
+
+  coverage-report:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download test results
+        uses: actions/download-artifact@v4
+        with:
+          name: test-results
+          path: TestResults
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Install ReportGenerator tool
+        run: dotnet tool install -g dotnet-reportgenerator-globaltool
+
+      - name: Generate coverage HTML report
+        run: |
+          reportgenerator \
+            -reports:TestResults/**/coverage.xml \
+            -targetdir:CoverageReport \
+            -reporttypes:HtmlInline_AzurePipelines
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: CoverageReport

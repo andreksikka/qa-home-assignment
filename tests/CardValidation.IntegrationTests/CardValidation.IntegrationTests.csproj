@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsTestProject>true</IsTestProject>
+    <ReqnrollProject>true</ReqnrollProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Required for testhost -->
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+
+    <PackageReference Include="Reqnroll" Version="2.0.0" />
+    <PackageReference Include="Reqnroll.XUnit" Version="2.0.0" />
+    <PackageReference Include="Gherkin" Version="19.0.3" />
+
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.0" />
+    <PackageReference Include="FluentAssertions" Version="6.12.1" />
+    <PackageReference Include="xunit" Version="2.6.6" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.0">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src/CardValidation.Web/CardValidation.Web.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Features/*.feature">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

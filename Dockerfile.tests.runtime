@@ -1,0 +1,9 @@
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS testrunner
+
+WORKDIR /app
+COPY . .
+
+RUN dotnet restore
+RUN dotnet build --configuration Debug --no-restore
+
+CMD ["dotnet", "test", "--configuration", "Debug", "--no-build"]
